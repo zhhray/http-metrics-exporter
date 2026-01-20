@@ -1,0 +1,20 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: metrics-app-monitor
+  namespace: demo-ns
+  labels:
+    prometheus: kube-prometheus
+    release: cpaas-monitor
+spec:
+  selector:
+    matchLabels:
+      app: metrics-app
+  endpoints:
+  - port: http
+    path: /metrics
+    interval: 15s
+    scrapeTimeout: 10s
+  namespaceSelector:
+    matchNames:
+    - demo-ns

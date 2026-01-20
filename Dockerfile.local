@@ -1,0 +1,21 @@
+FROM alpine:latest
+
+ENV APP_PORT=8080 \
+    TZ=Asia/Shanghai
+
+WORKDIR /app
+
+COPY build/app-linux-amd64 /app/app
+
+RUN chmod +x /app/app
+
+RUN addgroup -g 1000 -S appgroup && \
+    adduser -u 1000 -S appuser -G appgroup
+
+RUN chown -R appuser:appgroup /app
+
+USER appuser
+
+EXPOSE ${APP_PORT}
+
+ENTRYPOINT ["/app/app"]
