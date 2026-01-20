@@ -271,5 +271,6 @@ kubectl apply -f deploy/hpa.yaml
 ```bash
 kubectl get hpa -n demo-ns
 # scp deploy/load-test-scaling.sh to the master node of k8s cluster which the metrics-app is running
-sh -c deploy/load-test-scaling.sh
+chomd 755 load-test-scaling.sh
+sh load-test-scaling.sh
 ```
