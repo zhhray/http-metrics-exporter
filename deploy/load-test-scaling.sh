@@ -3,6 +3,7 @@ set -e
 
 NAMESPACE="demo-ns"
 LOAD_TEST_IMAGE="busybox:latest"
+
 echo "=== Effective Load Test Script ==="
 echo
 
@@ -11,7 +12,7 @@ echo "1. Current Status:"
 kubectl get hpa -n $NAMESPACE metrics-app-hpa
 echo
 
-# 2. Create a dedicated load test Pod (using busybox, lighter weight)
+# 2. Create a dedicated load test Pod
 echo "2. Creating load test Pod..."
 cat <<EOF | kubectl apply -f -
 apiVersion: v1
@@ -20,9 +21,22 @@ metadata:
   name: load-test-pod
   namespace: $NAMESPACE
 spec:
+  securityContext:
+    seccompProfile:
+      type: RuntimeDefault
+    runAsNonRoot: true
+    runAsUser: 1000
+    runAsGroup: 1000
   containers:
   - name: load-test
     image: $LOAD_TEST_IMAGE
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+        - ALL
+      seccompProfile:
+        type: RuntimeDefault
     command: ["/bin/sh"]
     args:
     - -c

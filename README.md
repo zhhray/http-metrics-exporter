@@ -271,6 +271,56 @@ kubectl apply -f deploy/hpa.yaml
 ```bash
 kubectl get hpa -n demo-ns
 # scp deploy/load-test-scaling.sh to the master node of k8s cluster which the metrics-app is running
-chomd 755 load-test-scaling.sh
-sh load-test-scaling.sh
+chmod +x load-test-scaling.sh
+./load-test-scaling.sh
+# you can see the result of load-test-scaling.sh:
+=== Effective Load Test Script ===
+1. Current Status:
+NAME              REFERENCE                TARGETS   MINPODS   MAXPODS   REPLICAS   AGE
+metrics-app-hpa   Deployment/metrics-app   295m/5    1         10        1          17h
+
+2. Creating load test Pod...
+pod/load-test-pod created
+3. Waiting for load test Pod to start...
+pod/load-test-pod condition met
+4. Monitoring HPA changes (5 minutes)...
+Timestamp | Desired Replicas | Current Replicas | Current Metric | Status
+-----------------------------------------------------------------------
+11:48:44 | 1               | 1               | .30            | ⏸️ Stable
+11:48:55 | 1               | 1               | 39.38          | ⏸️ Stable
+11:49:05 | 1               | 1               | 39.38          | ⏸️ Stable
+11:49:15 | 3               | 1               | 97.19          | ⬆️ Scaling Up
+11:49:26 | 3               | 1               | 151.96         | ⬆️ Scaling Up
+11:49:36 | 3               | 3               | 151.96         | ⏸️ Stable
+11:49:47 | 6               | 3               | 180.46         | ⬆️ Scaling Up
+11:49:57 | 6               | 3               | 84.36          | ⬆️ Scaling Up
+11:50:08 | 6               | 6               | 90.73          | ⏸️ Stable
+11:50:18 | 10              | 6               | 61.33          | ⬆️ Scaling Up
+11:50:29 | 10              | 6               | 58.10          | ⬆️ Scaling Up
+11:50:39 | 10              | 10              | 56.58          | ⏸️ Stable
+11:50:49 | 10              | 10              | 44.74          | ⏸️ Stable
+11:51:00 | 10              | 10              | 34.19          | ⏸️ Stable
+11:51:10 | 10              | 10              | 31.17          | ⏸️ Stable
+11:51:20 | 10              | 10              | 33.69          | ⏸️ Stable
+11:51:31 | 10              | 10              | 33.84          | ⏸️ Stable
+11:51:41 | 10              | 10              | 31.80          | ⏸️ Stable
+11:51:52 | 10              | 10              | 32.83          | ⏸️ Stable
+11:52:02 | 10              | 10              | 32.26          | ⏸️ Stable
+11:52:12 | 10              | 10              | 31.62          | ⏸️ Stable
+11:52:23 | 10              | 10              | 31.94          | ⏸️ Stable
+11:52:33 | 10              | 10              | 28.20          | ⏸️ Stable
+11:52:44 | 10              | 10              | 27.83          | ⏸️ Stable
+11:52:54 | 10              | 10              | 30.93          | ⏸️ Stable
+11:53:05 | 10              | 10              | 30.47          | ⏸️ Stable
+11:53:15 | 10              | 10              | 30.32          | ⏸️ Stable
+11:53:25 | 10              | 10              | 29.80          | ⏸️ Stable
+11:53:36 | 10              | 10              | 29.42          | ⏸️ Stable
+11:53:46 | 10              | 10              | 28.87          | ⏸️ Stable
+
+5. Cleaning up load test Pod...
+pod "load-test-pod" force deleted
+
+Final Status:
+NAME              REFERENCE                TARGETS    MINPODS   MAXPODS   REPLICAS   AGE
+metrics-app-hpa   Deployment/metrics-app   29217m/5   1         10        10         17h
 ```
